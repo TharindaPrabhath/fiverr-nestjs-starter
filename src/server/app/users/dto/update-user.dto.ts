@@ -1,13 +1,11 @@
-export type Provider = 'google' | 'cognito';
+import { Provider } from 'src/server/common/types/user';
 
-export class User {
+export class UpdateUserDto {
   id: number;
   provider: Provider;
   providerId: string;
   refreshToken: string | null;
   username: string;
   password: string;
-  name?: string;
-  created_at: Date;
-  updated_at: Date;
+  name: string;
 }

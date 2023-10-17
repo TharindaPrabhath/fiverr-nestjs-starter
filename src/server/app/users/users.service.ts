@@ -4,6 +4,7 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -12,12 +13,31 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  create(user: CreateUserDto) {
-    return this.usersRepository.save(user);
+  async create(user: CreateUserDto): Promise<User> {
+    return await this.usersRepository.save(user);
+  }
+
+  async update(
+    id: string,
+    updateUserDto: Partial<UpdateUserDto>,
+  ) {
+    const chosenUser = await this.findOne({where: {id: Number(id)}});
+
+    if(!chosenUser) throw('no user found');
+
+    return this.usersRepository.save({
+      id: Number(id),
+      ...chosenUser,
+      ...updateUserDto
+    });
   }
 
   findOne(params: FindOneOptions<User> = {}) {
     return this.usersRepository.findOne(params);
+  }
+
+  async findByUsername(username: string): Promise<User> {
+    return this.usersRepository.findOne({ where: {username }});
   }
 
   findAll(params: FindManyOptions<User> = {}) {
